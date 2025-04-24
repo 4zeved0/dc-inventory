@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Ou o provedor do banco de dados que você está utilizando
+  url      = env("DATABASE_URL") // O URL de conexão ao banco de dados, geralmente armazenado no arquivo .env
+}
+
+model Localization {
+  id          Int          @id @default(autoincrement())
+  name        String
+  datacenters Datacenter[]
+}
+
+model Datacenter {
+  id             Int           @id @default(autoincrement())
+  name           String
+  Localization   Localization? @relation(fields: [localizationId], references: [id])
+  localizationId Int?
+  Rack           Rack[]
+}
+
+model Rack {
+  id           Int          @id @default(autoincrement())
+  rackNumber   Int // Removemos @unique
+  Datacenter   Datacenter   @relation(fields: [datacenterId], references: [id])
+  datacenterId Int
+  equipaments  Equipament[]
+  powerstrips  PowerStrip[]
+}
+
+model Equipament {
+  id              Int     @id @default(autoincrement())
+  model           String
+  hostname        String?
+  client          String?
+  serialNumber    String?
+  status          Boolean
+  spaceQuantity   Int
+  equipamentType  String
+  assetNumber     Int
+  equipamentBrand String
+  positionInRack  Int
+  observations    String?
+  Rack            Rack    @relation(fields: [rackId], references: [id]) // Alteramos para id
+  rackId          Int // Mudamos de rackRackNumber para rackId
+}
+
+model PowerStrip {
+  powerStripNumber Int    @id
+  numberKva        Int
+  powerStripColor  String
+  powerStripUsage  Int    @default(0)
+  Rack             Rack   @relation(fields: [rackId], references: [id]) // Alteramos para id
+  rackId           Int // Mudamos de rackRackNumber para rackId
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  surname   String
+  updatedAt DateTime @updatedAt
+}
