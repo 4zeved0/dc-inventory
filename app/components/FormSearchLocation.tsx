@@ -74,7 +74,7 @@ function FormSearchLocation() {
   };
 
   return (
-    <div className="w-full sm:min-w-[500px] p-6 rounded-xl">
+    <div className="w-full min-w-[400px] p-6 rounded-xl">
       <h1 className="text-3xl font-bold text-center mb-5">Pesquisa</h1>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <LocationSelect
@@ -105,14 +105,14 @@ function FormSearchLocation() {
             <button
               name="showDatacenter"
               type="submit"
-              className="w-full bg-[var(--bg-main)] hover:bg-[var(--bg-secondary)] text-white p-3 rounded-md transition"
+              className="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-md transition"
             >
               Ver Datacenter
             </button>
             <button
               name="searchEquipment"
               type="submit"
-              className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white p-3 rounded-md transition"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition"
             >
               Pesquisar Equipamento
             </button>

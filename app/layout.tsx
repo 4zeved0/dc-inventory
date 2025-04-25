@@ -2,6 +2,7 @@ import ProvidersContextAndSession from './context/ProvidersContextAndSession';
 import './globals.css'
 import { Roboto } from 'next/font/google'
 import ReactQueryProvider from './providers/ReactQueryProviders';
+import Navbar from './components/(Navbar)/Navbar';
 
 const roboto = Roboto({
   weight: ['400', '500', '700'],
@@ -15,7 +16,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html className={roboto.className}>
       <ReactQueryProvider>
         <ProvidersContextAndSession>
-          <body >{children}</body>
+          <body >
+            <Navbar />
+            {children}
+          </body>
         </ProvidersContextAndSession>
       </ReactQueryProvider>
     </html>

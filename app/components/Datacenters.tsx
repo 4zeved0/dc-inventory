@@ -5,6 +5,7 @@ import Racks from '../lib/Racks';
 import getEquipmentsByRack from '../lib/getEquipmentsByRack';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { Search } from 'lucide-react';
 
 type RackType = {
   id: number;
@@ -54,18 +55,15 @@ function Datacenters({ id }: Props) {
   return (
     <div className="min-h-screen px-4 py-8">
       <div className="max-w-7xl mx-auto">
-        <div className='flex justify-between items-center'>
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Racks do Datacenter</h2>
-
-          {/* Botão de voltar */}
-          <div className="flex justify-start mb-4">
-            <button
-              onClick={() => router.back()}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded transition hover:bg-blue-700"
-            >
-              Voltar
-            </button>
-          </div>
+        <div className="flex justify-between items-center mb-10 flex-col sm:flex-row gap-3">
+          <h2 className="text-2xl md:text-2xl font-bold text-center">Racks do Datacenter</h2>
+          <button
+            onClick={() => router.push('/dashboard/searchEquipament')}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white text-sm rounded-md transition"
+          >
+            <Search size={16} />
+            Pesquisar outro DC
+          </button>
         </div>
 
         {isLoading ? (
@@ -109,12 +107,11 @@ function Datacenters({ id }: Props) {
                     <span className="font-medium text-sm mb-2">{rack.rackNumber}</span>
                     <div
                       onClick={handleClick}
-                      className={`relative w-full max-w-[100px] h-[100px] p-1 rounded-xl ${bgColor} cursor-pointer transition hover:ring-2 ring-gray-600`}
+                      className={`relative w-full max-w-[100px] h-[100px] p-1 rounded-xl ${bgColor} cursor-pointer transition hover:shadow-md`}
                     >
                       <h1 className="z-10 relative text-center text-[10px] font-semibold text-white">
-                        {equipamentLoading ? '...' : isEmpty ? 'Vazio' : `${percentageUsed}%`}
+                        {equipamentLoading ? '...' : isEmpty ? '0%' : `${percentageUsed}%`}
                       </h1>
-
                       <div
                         className="absolute bottom-0 left-0 w-full bg-white/10 rounded-b-md transition-all duration-300 ease-in-out"
                         style={{ height: `${cappedPercentage}%` }}

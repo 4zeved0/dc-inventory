@@ -18,7 +18,7 @@ export default function ResizableHeader({ colWidths, onResize }: Props) {
   };
 
   return (
-    <div className="flex w-full bg-gray-300 text-gray-700 dark:text-gray-300 border-b text-sm">
+    <div className="flex w-full bg-gray-300 text-gray-700 border-b text-sm">
       {Object.keys(headers).map((field) => (
         <div
           key={field}
@@ -29,7 +29,7 @@ export default function ResizableHeader({ colWidths, onResize }: Props) {
             minWidth: 80,
             maxWidth: colWidths[field] || 150, // Valor padrão
           }}
-          className="relative px-4 py-3 flex items-center font-bold bg-gray-300 dark:bg-gray-800 border-l border-gray-400 dark:border-gray-700"
+          className="relative px-4 py-3 flex items-center font-bold bg-gray-300 border-l border-gray-400"
         >
           <span className="truncate w-full overflow-hidden whitespace-nowrap">
             {headers[field as keyof typeof headers]}
