@@ -3,7 +3,7 @@ import FormSearchLocation from "@/app/components/FormSearchLocation";
 
 function SearchEquipamentPage() {
   return (
-    <div className="flex items-center justify-center h-full w-full">
+    <div className="flex items-center justify-center ml-[30px]">
       <div>
         <FormSearchLocation />
       </div>

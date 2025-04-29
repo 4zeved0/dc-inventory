@@ -1,10 +1,9 @@
 'use client'
 
-import { SessionContext } from '@/app/context/SessionContext';
-import searchUser from '@/app/lib/searchUser';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import searchUser from '@/app/lib/searchUser';
 
 type UserType = {
   email: string;
@@ -13,67 +12,71 @@ type UserType = {
 };
 
 export default function App() {
-  const { session, status } = useContext(SessionContext);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState<string>('');
-  const [user, setUser] = useState<UserType | null>(null);
+  const { data: session, status } = useSession(); // Utilizando useSession para gerenciar o estado de autenticação
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === 'loading') {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-      setUserEmail(session?.user?.email ?? '');
-    }
-  }, [status, session]);
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      if (!userEmail) return;
-
-      try {
-        const res = await searchUser(userEmail);
-
-        if (!res) {
-          router.push('/new-user');
-          return;
-        }
-
-        const formattedUser: UserType = {
-          email: res.email,
-          name: res.name,
-          surname: res.surname,
-        };
-
-        setUser(formattedUser);
-      } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
+  // Função para buscar o usuário com base no email
+  const fetchUser = async (email: string) => {
+    try {
+      const res = await searchUser(email);
+      if (!res) {
+        router.push('/new-user'); // Redireciona para a criação de novo usuário se não encontrado
+        return null;
       }
-    };
 
-    verifyUser();
-  }, [userEmail, router]);
+      return {
+        email: res.email,
+        name: res.name,
+        surname: res.surname,
+      };
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+      throw new Error('Erro ao buscar usuário');
+    }
+  };
+
+  // Usando useQuery para buscar dados do usuário
+  const { data: user, isLoading, isError } = useQuery<UserType | null>({
+    queryKey: ['user', session?.user?.email],
+    queryFn: () => session?.user?.email ? fetchUser(session.user.email) : null,
+    enabled: !!session?.user?.email, // Só executa a query se o email do usuário estiver disponível
+  });
 
   if (isLoading || status === 'loading') {
     return (
-      <div className='w-screen h-screen flex items-center justify-center'>
-        <h1>Loading...</h1>
+      <div className="h-screen flex items-center justify-center">
+        <span>Carregando...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="text-red-500">Erro ao carregar o usuário</span>
       </div>
     );
   }
 
   if (status === 'authenticated' && user) {
     return (
-      <div>
-        <h1>Olá, {user.name} {user.surname}</h1>
+      <div className="max-w-7xl mx-auto">
+        <h1>
+          Olá, {user.name} {user.surname}!
+        </h1>
       </div>
     );
   }
 
+  // Exibe o botão de login caso o usuário não esteja autenticado
   return (
-    <div>
-      <button onClick={() => signIn()}>Fazer Login</button>
+    <div className="max-w-7xl mx-auto flex justify-center">
+      <button
+        onClick={() => signIn()}
+        className="bg-yellow-500 hover:bg-yellow-400 text-white py-2 px-6 rounded-lg transition-all duration-300"
+      >
+        Fazer Login
+      </button>
     </div>
   );
 }

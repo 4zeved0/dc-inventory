@@ -158,7 +158,7 @@ export default function FormSearchEquipment({ rackInformations }: Props) {
 
   return (
     <div className="max-w-[1300px] mx-auto h-auto px-6 py-8 transition-all">
-      <div className="font-bold text-gray-700 text-lg font-medium mb-4">
+      <div className="font-bold text-gray-700 text-lg mb-4">
         Localização: {locale}:{datacenter}:{rackId}
       </div>
 

@@ -7,18 +7,18 @@ import Navbar from './components/(Navbar)/Navbar';
 const roboto = Roboto({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
-})
-
-
+});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={roboto.className}>
+    <html lang="pt-BR" className={roboto.className}>
       <ReactQueryProvider>
         <ProvidersContextAndSession>
-          <body >
+          <body className="flex">
             <Navbar />
-            {children}
+            <div className="flex-1 min-h-screen"> {/* Conteúdo */}
+              {children}
+            </div>
           </body>
         </ProvidersContextAndSession>
       </ReactQueryProvider>
