@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import searchPowerStrip from "../lib/searchPowerStrip";
 import { useState } from "react";
-import { ArrowBigRightDash, ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-function PowerStrip({ id }: { id: number }) {
+function PowerStrip({ id, localizacao, dc, rack }: { id: number, localizacao: string, dc: string, rack: string }) {  // Agora recebendo localizacao e dc
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const { data: powerStrips = [], isLoading } = useQuery({
     queryKey: [id],
     queryFn: () => searchPowerStrip(id),
@@ -18,19 +22,30 @@ function PowerStrip({ id }: { id: number }) {
 
   return (
     <div className="space-y-4">
-      <button
-        onClick={() => setShowPowerStrips(!showPowerStrips)}
-        className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition"
-      >
-        {showPowerStrips ? <div className="flex items-center gap-2"><ArrowDown width={15} />Ocultar réguas</div> : <div className="flex items-center gap-2"><ArrowRight width={15} />Ver réguas</div>}
-      </button>
-
+      <div className="flex gap-3">
+        <button
+          onClick={() => setShowPowerStrips(!showPowerStrips)}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition"
+        >
+          {showPowerStrips ? <div className="flex items-center gap-2"><ArrowDown width={15} />Ocultar réguas</div> : <div className="flex items-center gap-2"><ArrowRight width={15} />Ver réguas</div>}
+        </button>
+        <button
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition disabled:opacity-60"
+          onClick={() => {
+            setLoading(true);
+            router.push(`/register-itens?locale=${localizacao}&datacenter=${dc}&rackId=${rack}&id=${id}`);
+          }}
+          disabled={loading}
+        >
+          {loading ? "Carregando..." : "Adicionar Equipamento"}
+        </button>
+      </div>
       {showPowerStrips && (
         <>
           {powerStrips.length === 0 ? (
             <div className="text-sm text-gray-500">Nenhuma régua encontrada.</div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-4">
               {powerStrips.map((e, index) => {
                 const color = e.powerStripColor.toLowerCase();
                 const translatedColor = e.powerStripColor === "RED" ? "Vermelho" : "Azul";

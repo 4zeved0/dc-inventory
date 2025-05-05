@@ -57,9 +57,6 @@ export default function FormSearchEquipment({ rackInformations }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log(pathname);
-
-
   const {
     data: equipments = [],
     refetch,
@@ -153,9 +150,6 @@ export default function FormSearchEquipment({ rackInformations }: Props) {
     return res
   }, [colWidths]);
 
-
-
-
   return (
     <div className="max-w-[1300px] mx-auto h-auto px-6 py-8 transition-all">
       <div className="font-bold text-gray-700 text-lg mb-4">
@@ -172,8 +166,9 @@ export default function FormSearchEquipment({ rackInformations }: Props) {
         <FilterControls refresh={refetch} />
       </form>
 
-      <div className='mb-10'>
-        <PowerStrip id={rackInformations} />
+      <div className="mb-10">
+        {/* Passando os parâmetros locais, datacenter e rackId para o PowerStrip */}
+        <PowerStrip id={rackInformations} localizacao={locale} dc={datacenter} rack={rackId} />
       </div>
       <div className="w-full overflow-x-auto">
         {isLoading || isFetching ? (

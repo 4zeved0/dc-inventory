@@ -1,4 +1,14 @@
-'use client'
+'use client';
+
+import { useRouter } from "next/navigation";
+import registerItens from "../lib/registerItens";
+
+type Props = {
+  locale: string;
+  datacenter: string;
+  rackId: string;
+  id: string;
+};
 
 type ItensType = {
   model: string;
@@ -15,43 +25,75 @@ type ItensType = {
   rackRackNumber: number;
 };
 
-function RegisterItemForm() {
-  const handleSubmit = (event: any) => {
+function RegisterItemForm({ locale, datacenter, rackId }: Props) {
+  const router = useRouter();
+
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
 
+    const itemData: ItensType = {
+      model: data.model as string,
+      hostname: data.hostname as string,
+      client: data.client as string,
+      serialNumber: data.serialNumber as string,
+      status: data.status === 'on',
+      spaceQuantity: Number(data.spaceQuantity),
+      equipamentType: data.equipamentType as string,
+      assetNumber: Number(data.assetNumber),
+      equipamentBrand: data.equipamentBrand as string,
+      positionInRack: Number(data.positionInRack),
+      observations: data.observations as string,
+      rackRackNumber: rackId as number,
+    };
 
+    try {
+      await registerItens(itemData);
+      alert("Equipamento registrado com sucesso!");
+      router.push(`/dashboard`);
+    } catch (error) {
+      console.error("Erro ao registrar o equipamento:", error);
+      alert("Ocorreu um erro ao registrar o equipamento.");
+    }
   };
-
-  function convertLocalization() {
-
-  }
 
   return (
     <div className="flex justify-center p-4">
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 w-full max-w-6xl p-6 rounded-lg">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-6xl p-6 rounded-lg">
+
+        {/* Inputs desabilitados com as props */}
         <div className="flex flex-col">
-          <label>Id</label>
-          <input disabled name="id" className="p-2 border border-slate-300 rounded" type="number" />
+          <label htmlFor="locale">Localidade</label>
+          <input id="locale" name="locale" className="p-2 border border-slate-300 rounded bg-gray-100" type="text" value={locale} disabled />
         </div>
+
         <div className="flex flex-col">
-          <label>Marca</label>
-          <input name="equipamentBrand" className="p-2 border border-slate-300 rounded" type="text" />
+          <label htmlFor="datacenter">Datacenter</label>
+          <input id="datacenter" name="datacenter" className="p-2 border border-slate-300 rounded bg-gray-100" type="text" value={datacenter} disabled />
         </div>
-        <div className="flex flex-col sm:col-span-2">
-          <label>Nome</label>
-          <input disabled name="nome" className="p-2 border border-slate-300 rounded" type="text" />
-        </div>
+
         <div className="flex flex-col">
-          <label>Modelo</label>
-          <input name="model" className="p-2 border border-slate-300 rounded" type="text" />
+          <label htmlFor="rackId">Número do Rack</label>
+          <input id="rackId" name="rackId" className="p-2 border border-slate-300 rounded bg-gray-100" type="number" value={rackId} disabled />
         </div>
-        <div className="flex flex-col col-span-1">
-          <label>Serial</label>
-          <input name="serialNumber" className="p-2 border border-slate-300 rounded" type="text" />
+
+        {/* Restante do formulário */}
+        <div className="flex flex-col">
+          <label htmlFor="equipamentBrand">Marca</label>
+          <input id="equipamentBrand" name="equipamentBrand" className="p-2 border border-slate-300 rounded" type="text" />
         </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="model">Modelo</label>
+          <input id="model" name="model" className="p-2 border border-slate-300 rounded" type="text" />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="serialNumber">Serial</label>
+          <input id="serialNumber" name="serialNumber" className="p-2 border border-slate-300 rounded" type="text" />
+        </div>
+
         <div className="flex flex-col">
           <label>Status</label>
           <div className="flex gap-4">
@@ -63,26 +105,42 @@ function RegisterItemForm() {
             </label>
           </div>
         </div>
+
         <div className="flex flex-col">
-          <label>Cliente</label>
-          <input name="client" className="p-2 border border-slate-300 rounded" type="text" />
+          <label htmlFor="client">Cliente</label>
+          <input id="client" name="client" className="p-2 border border-slate-300 rounded" type="text" />
         </div>
+
         <div className="flex flex-col">
-          <label>Patrimonio</label>
-          <input name="assetNumber" className="p-2 border border-slate-300 rounded" type="number" min={0} />
+          <label htmlFor="assetNumber">Patrimônio</label>
+          <input id="assetNumber" name="assetNumber" className="p-2 border border-slate-300 rounded" type="number" min={0} />
         </div>
+
         <div className="flex flex-col">
-          <label>Hostname</label>
-          <input name="hostname" className="p-2 border border-slate-300 rounded" type="text" />
+          <label htmlFor="hostname">Hostname</label>
+          <input id="hostname" name="hostname" className="p-2 border border-slate-300 rounded" type="text" />
         </div>
+
         <div className="flex flex-col">
-          <label>Localização</label>
-          <input name="localizacao" value="SP2" disabled className="p-2 border border-slate-300 rounded" type="text" min={0} />
+          <label htmlFor="spaceQuantity">Quantidade de Espaços</label>
+          <input id="spaceQuantity" name="spaceQuantity" className="p-2 border border-slate-300 rounded" type="number" />
         </div>
+
         <div className="flex flex-col">
-          <label>Quantidade de U's</label>
-          <input name="spaceQuantity" className="p-2 border border-slate-300 rounded" type="number" min={0} />
+          <label htmlFor="equipamentType">Tipo de Equipamento</label>
+          <input id="equipamentType" name="equipamentType" className="p-2 border border-slate-300 rounded" type="text" />
         </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="positionInRack">Posição no Rack</label>
+          <input id="positionInRack" name="positionInRack" className="p-2 border border-slate-300 rounded" type="number" />
+        </div>
+
+        <div className="flex flex-col col-span-full">
+          <label htmlFor="observations">Observações</label>
+          <textarea id="observations" name="observations" className="p-2 border border-slate-300 rounded" />
+        </div>
+
         <button
           type="submit"
           className="bg-slate-800 text-white p-3 rounded col-span-full cursor-pointer hover:bg-slate-900"

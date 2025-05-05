@@ -7,16 +7,20 @@ import LoginFooter from "./LoginFooter";
 export default function LoginForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(false);
     setSuccess(false);
+    setLoading(true);
 
     const form = e.currentTarget;
     const email = form.email.value;
 
     const res = await signIn("email", { email, redirect: false });
+
+    setLoading(false);
 
     if (!res || res.error) {
       setError(true);
@@ -33,22 +37,26 @@ export default function LoginForm() {
         <div>
           <input
             id="email"
-            name="ema'il"
+            name="email" // Corrigido de "ema'il" para "email"
             type="email"
             required
             className="focus:ring-2 focus:ring-blue-500 mt-2 w-full px-4 py-2 border border-gray-300 text-black rounded-md focus:outline-none"
             placeholder="Digite seu email"
-            disabled={success}
+            disabled={success || loading}
           />
         </div>
         {error && <div className="bg-red-600 text-center p-3 text-white rounded-md">Erro ao tentar fazer login</div>}
         <button
           type="submit"
-          className={`w-full mt-4 py-2 rounded-md text-white focus:outline-none ring-2 focus:ring-blue-500 ${success ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+          className={`w-full mt-4 py-2 rounded-md text-white focus:outline-none ring-2 focus:ring-blue-500 ${success || loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
             }`}
-          disabled={success}
+          disabled={success || loading}
         >
-          {success ? "Verifique seu e-mail" : "Enviar"}
+          {loading
+            ? "Carregando..."
+            : success
+              ? "Verifique seu e-mail"
+              : "Enviar"}
         </button>
       </form>
       <LoginFooter />

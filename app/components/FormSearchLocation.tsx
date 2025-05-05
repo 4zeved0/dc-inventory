@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +21,7 @@ function FormSearchLocation() {
   const [locationId, setLocationId] = useState<number | null>(null);
   const [datacenterId, setDatacenterId] = useState<number | null>(null);
   const [rackId, setRackId] = useState<number | null>(null);
+  const [activeButton, setActiveButton] = useState<null | string>(null);
 
   const { data: locations = [] } = useQuery({
     queryKey: ["locations"],
@@ -42,10 +43,12 @@ function FormSearchLocation() {
     staleTime: 300000,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const button = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
     const action = button?.name;
+
+    setActiveButton(action);
 
     const selectedData = {
       location: locations.find((loc) => loc.id === locationId) || null,
@@ -74,7 +77,7 @@ function FormSearchLocation() {
   };
 
   return (
-    <div className="w-full min-w-[400px] p-6 rounded-xl">
+    <div className="w-full min-w-[500px] p-6 rounded-xl">
       <h1 className="text-3xl font-bold text-center mb-5">Pesquisa</h1>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <LocationSelect
@@ -105,16 +108,18 @@ function FormSearchLocation() {
             <button
               name="showDatacenter"
               type="submit"
-              className="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-md transition"
+              className="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!!activeButton}
             >
-              Ver Datacenter
+              {activeButton === "showDatacenter" ? "Carregando..." : "Ver Datacenter"}
             </button>
             <button
               name="searchEquipment"
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!!activeButton}
             >
-              Pesquisar Equipamento
+              {activeButton === "searchEquipment" ? "Carregando..." : "Pesquisar Equipamento"}
             </button>
           </div>
         )}
