@@ -14,7 +14,7 @@ type ItensType = {
   equipamentBrand: string;
   positionInRack: number;
   observations?: string;
-  rackRackNumber: number;
+  rackId: number;  // Usando rackId
 };
 
 export default async function registerItens(data: ItensType) {
@@ -32,7 +32,7 @@ export default async function registerItens(data: ItensType) {
         equipamentBrand: data.equipamentBrand,
         positionInRack: data.positionInRack,
         observations: data.observations || undefined,
-        rackRackNumber: data.rackRackNumber,
+        rackId: data.rackId, // Alteração para rackId
       },
     });
 

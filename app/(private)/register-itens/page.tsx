@@ -1,29 +1,31 @@
-'use client';
+// app/(private)/register-itens/page.tsx
 
-import { useSearchParams } from 'next/navigation';
 import RegisterItemForm from "@/app/components/RegisterItemForm";
-
-function CadastroItems() {
-  const searchParams = useSearchParams();
-
-  const locale = searchParams.get("locale") || "";
-  const datacenter = searchParams.get("datacenter") || "";
-  const rackId = searchParams.get("rackId") || "";
-  const id = searchParams.get("id") || "";
+export default async function CadastroItems({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    locale?: string;
+    datacenter?: string;
+    rackId?: string;
+    id?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const locale = params.locale ?? "";
+  const datacenter = params.datacenter ?? "";
+  const rackId = params.rackId ?? "";
+  const id = params.id ?? "";
 
   return (
-    <div>
-      <div className="max-w-[1100px] md:flex md:flex-col md:h-screen items-center justify-center m-auto">
-        <h1 className="text-3xl mt-10 md:mt-0 font-bold text-center">Cadastro de Equipamento</h1>
-        <RegisterItemForm
-          locale={locale}
-          datacenter={datacenter}
-          rackId={rackId}
-          id={id}
-        />
-      </div>
+    <div className="max-w-[1100px] md:flex md:flex-col md:h-screen items-center justify-center m-auto">
+      <h1 className="text-3xl mt-10 md:mt-0 font-bold text-center">Cadastro de Equipamento</h1>
+      <RegisterItemForm
+        locale={locale}
+        datacenter={datacenter}
+        rackId={rackId}
+        id={id}
+      />
     </div>
   );
 }
-
-export default CadastroItems;

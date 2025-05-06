@@ -1,24 +1,31 @@
 // types/next-auth.d.ts
 
-import NextAuth from "next-auth";
-import { User as PrismaUser } from "@prisma/client";
+import { DefaultSession } from "next-auth";
 
-// Extende a tipagem da sessão do NextAuth
 declare module "next-auth" {
   interface Session {
+    accessToken?: string;
     user: {
       id: string;
       email: string;
       name: string;
-      surname: string;  // Adicionando 'surname' à tipagem da sessão
+      surname: string;
     };
   }
 
-  // Caso precise estender o tipo do token JWT
-  interface JWT {
+  interface User {
     id: string;
     email: string;
     name: string;
-    surname: string;  // Garantindo que o 'surname' está no JWT
+    surname: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    email: string;
+    name?: string;
+    surname?: string;
   }
 }

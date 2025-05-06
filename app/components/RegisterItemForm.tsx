@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from "next/navigation";
-import registerItens from "../lib/registerItens";
+import { useRouter } from 'next/navigation';
+import registerItens from '../lib/registerItens';
 
 type Props = {
   locale: string;
@@ -20,12 +20,14 @@ type ItensType = {
   equipamentType: string;
   assetNumber: number;
   equipamentBrand: string;
-  positionInRack: number;
+  positionInRack: number;  // Agora é obrigatório
   observations?: string;
-  rackRackNumber: number;
+  rackId: number;
+  rackRackNumber: number;  // Agora é obrigatório
 };
 
-function RegisterItemForm({ locale, datacenter, rackId }: Props) {
+function RegisterItemForm({ locale, datacenter, rackId, id }: Props) {
+
   const router = useRouter();
 
   const handleSubmit = async (event: any) => {
@@ -43,26 +45,26 @@ function RegisterItemForm({ locale, datacenter, rackId }: Props) {
       equipamentType: data.equipamentType as string,
       assetNumber: Number(data.assetNumber),
       equipamentBrand: data.equipamentBrand as string,
-      positionInRack: Number(data.positionInRack),
       observations: data.observations as string,
-      rackRackNumber: rackId as number,
+      rackId: Number(id), // Usando rackId como número do rack
+      positionInRack: 1,  // Definindo um valor fixo ou você pode calcular isso dinamicamente
+      rackRackNumber: Number(rackId),  // Agora passando rackId como rackRackNumber
     };
 
     try {
       await registerItens(itemData);
-      alert("Equipamento registrado com sucesso!");
+      alert('Equipamento registrado com sucesso!');
       router.push(`/dashboard`);
     } catch (error) {
-      console.error("Erro ao registrar o equipamento:", error);
-      alert("Ocorreu um erro ao registrar o equipamento.");
+      console.error('Erro ao registrar o equipamento:', error);
+      alert('Ocorreu um erro ao registrar o equipamento.');
     }
   };
 
   return (
     <div className="flex justify-center p-4">
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-6xl p-6 rounded-lg">
-
-        {/* Inputs desabilitados com as props */}
+        {/* Informações fixas */}
         <div className="flex flex-col">
           <label htmlFor="locale">Localidade</label>
           <input id="locale" name="locale" className="p-2 border border-slate-300 rounded bg-gray-100" type="text" value={locale} disabled />
@@ -78,15 +80,15 @@ function RegisterItemForm({ locale, datacenter, rackId }: Props) {
           <input id="rackId" name="rackId" className="p-2 border border-slate-300 rounded bg-gray-100" type="number" value={rackId} disabled />
         </div>
 
-        {/* Restante do formulário */}
+        {/* Campos editáveis */}
         <div className="flex flex-col">
           <label htmlFor="equipamentBrand">Marca</label>
-          <input id="equipamentBrand" name="equipamentBrand" className="p-2 border border-slate-300 rounded" type="text" />
+          <input id="equipamentBrand" name="equipamentBrand" className="p-2 border border-slate-300 rounded" type="text" required />
         </div>
 
         <div className="flex flex-col">
           <label htmlFor="model">Modelo</label>
-          <input id="model" name="model" className="p-2 border border-slate-300 rounded" type="text" />
+          <input id="model" name="model" className="p-2 border border-slate-300 rounded" type="text" required />
         </div>
 
         <div className="flex flex-col">
@@ -129,11 +131,6 @@ function RegisterItemForm({ locale, datacenter, rackId }: Props) {
         <div className="flex flex-col">
           <label htmlFor="equipamentType">Tipo de Equipamento</label>
           <input id="equipamentType" name="equipamentType" className="p-2 border border-slate-300 rounded" type="text" />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="positionInRack">Posição no Rack</label>
-          <input id="positionInRack" name="positionInRack" className="p-2 border border-slate-300 rounded" type="number" />
         </div>
 
         <div className="flex flex-col col-span-full">

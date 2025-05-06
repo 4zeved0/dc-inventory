@@ -65,8 +65,6 @@ export default function App() {
   if (status === 'authenticated' && user) {
     const buttons = [
       { path: '/dashboard', label: 'Dashboard', color: 'bg-blue-600 hover:bg-blue-700' },
-      { path: '/register-itens', label: 'Cadastro de Equipamentos', color: 'bg-red-600 hover:bg-red-700' },
-      { path: '/add-powerstrip', label: 'Adicionar régua', color: 'bg-amber-600 hover:bg-amber-700' },
       { path: '/dashboard/searchEquipament', label: 'Pesquisar Equipamentos', color: 'bg-gray-600 hover:bg-gray-700' },
     ];
 
