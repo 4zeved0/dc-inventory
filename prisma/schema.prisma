@@ -23,7 +23,7 @@ model Datacenter {
 
 model Rack {
   id           Int          @id @default(autoincrement())
-  rackNumber   Int // Removemos @unique
+  rackNumber   Int
   Datacenter   Datacenter   @relation(fields: [datacenterId], references: [id])
   datacenterId Int
   equipaments  Equipament[]
@@ -43,8 +43,8 @@ model Equipament {
   equipamentBrand String
   positionInRack  Int
   observations    String?
-  Rack            Rack    @relation(fields: [rackId], references: [id]) // Alteramos para id
-  rackId          Int // Mudamos de rackRackNumber para rackId
+  Rack            Rack    @relation(fields: [rackId], references: [id])
+  rackId          Int
 }
 
 model PowerStrip {
@@ -52,14 +52,45 @@ model PowerStrip {
   numberKva        Int
   powerStripColor  String
   powerStripUsage  Int    @default(0)
-  Rack             Rack   @relation(fields: [rackId], references: [id]) // Alteramos para id
-  rackId           Int // Mudamos de rackRackNumber para rackId
+  Rack             Rack   @relation(fields: [rackId], references: [id])
+  rackId           Int
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  surname   String
-  updatedAt DateTime @updatedAt
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  name          String
+  surname       String
+  updatedAt     DateTime  @updatedAt
+  emailVerified DateTime? // Novo campo para data de verificação de e-mail
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                Int     @id @default(autoincrement())
+  userId            Int
+  providerType      String
+  providerId        String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  user              User    @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

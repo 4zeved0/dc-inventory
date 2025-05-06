@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import EmailProvider from "next-auth/providers/email";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@next-auth/prisma-adapter"; // Importando o PrismaAdapter
+import { PrismaClient } from "@prisma/client"; // Importando o PrismaClient
 import nodemailer from "nodemailer";
 import type { SendVerificationRequestParams } from "next-auth/providers/email";
 
@@ -31,25 +31,26 @@ async function sendVerificationRequest({ identifier, url, provider }: SendVerifi
   }
 }
 
-// Configuração consolidada do NextAuth (sem exportar authOptions!)
+// Configuração do NextAuth com PrismaAdapter
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  secret: process.env.AUTH_SECRET,
+  adapter: PrismaAdapter(prisma), // Usando PrismaAdapter com o Prisma Client
+  secret: process.env.AUTH_SECRET,  // A chave secreta para encriptação dos tokens
   providers: [
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-      sendVerificationRequest,
+      server: process.env.EMAIL_SERVER, // Configuração do servidor de e-mail
+      from: process.env.EMAIL_FROM, // E-mail de envio
+      sendVerificationRequest, // Função customizada para enviar o e-mail de verificação
     }),
   ],
   session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60,
+    strategy: "jwt", // Estratégia de sessão com JWT
+    maxAge: 24 * 60 * 60, // Tempo máximo da sessão
   },
   pages: {
-    signIn: "/login",
+    signIn: "/login", // Página personalizada de login
   },
   callbacks: {
+    // Callback de JWT para adicionar dados adicionais ao token
     async jwt({ token, account, user }) {
       if (account && user && user.email) {
         token.email = user.email;
@@ -67,6 +68,7 @@ const handler = NextAuth({
       }
       return token;
     },
+    // Callback de sessão para customizar os dados da sessão
     async session({ session, token }) {
       (session as any).accessToken = token.email;
       session.user.id = token.id;
@@ -77,5 +79,5 @@ const handler = NextAuth({
   },
 });
 
-// Exportando para os métodos HTTP (sem exportar nada além disso!)
+// Exportando para os métodos HTTP
 export { handler as GET, handler as POST };
