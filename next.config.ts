@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    appDir: true,
-    useCache: true,
+    useCache: true, // mantém a configuração de cache experimental, se desejado
   },
-  output: 'standalone', // Recomendado para deploys mais robustos (ex: Docker, Vercel)
   images: {
     remotePatterns: [
       {
