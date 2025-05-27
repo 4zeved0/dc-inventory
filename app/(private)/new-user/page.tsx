@@ -2,7 +2,6 @@
 
 import Terms from '@/app/components/Terms';
 import createUser from '@/app/lib/createUser';
-import searchUser from '@/app/lib/searchUser';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,7 +14,7 @@ type UserType = {
 
 function FirstAccess() {
   const [showTerm, setShowTerm] = useState(false);
-  const [loading, setLoading] = useState(true); // 👈 novo estado
+  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
@@ -23,18 +22,31 @@ function FirstAccess() {
   useEffect(() => {
     const checkUser = async () => {
       if (!session) {
-        router.push('/')
+        router.push('/');
+        return;
       }
+
       if (session?.user?.email) {
         const userEmail = session.user.email;
         setEmail(userEmail);
 
         try {
-          const res = await searchUser(userEmail);
-          { res ? router.push('/') : setLoading(false); }
+          const res = await fetch(`/api/verify-user?email=${userEmail}`, {
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+          });
+
+          const data = await res.json();
+
+          if (data.exists) {
+            router.push('/');  // já cadastrado, redireciona
+          } else {
+            setLoading(false);  // ainda não cadastrado, exibe form
+          }
+
         } catch (error) {
           console.error('Erro ao buscar usuário:', error);
-          setLoading(false); // mesmo com erro, deixa prosseguir
+          setLoading(false);  // mesmo com erro, deixa prosseguir
         }
       }
     };
@@ -54,17 +66,31 @@ function FirstAccess() {
     };
 
     try {
-      await createUser(userData.email, userData.name, userData.surname);
+      const res = await fetch('/api/create-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('Erro ao criar usuário:', errorData.error);
+        return;
+      }
+
+      const createdUser = await res.json();
+      console.log('Usuário criado:', createdUser);
       router.push('/');
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
     }
   };
 
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <p >Carregando...</p>
+        <p>Carregando...</p>
       </div>
     );
   }

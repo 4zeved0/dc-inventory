@@ -77,55 +77,58 @@ function FormSearchLocation() {
   };
 
   return (
-    <div className="w-full min-w-[500px] p-6 rounded-xl">
-      <h1 className="text-3xl font-bold text-center mb-5">Pesquisa</h1>
-      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-        <LocationSelect
-          locations={locations}
-          onSelect={(id) => {
-            setLocationId(id || null);
-            setDatacenterId(null);
-            setRackId(null);
-          }}
-        />
+    <form className="flex flex-col gap-5 sm:w-[400px] py-3" onSubmit={handleSubmit}>
+      {/* Location Select - Sempre habilitado */}
+      <LocationSelect
+        locations={locations}
+        onSelect={(id) => {
+          setLocationId(id || null);
+          setDatacenterId(null);
+          setRackId(null);
+        }}
+      />
 
-        {locationId !== null && datacenters.length > 0 && (
-          <DatacenterSelect
-            datacenters={datacenters}
-            onSelect={(id) => {
-              setDatacenterId(id || null);
-              setRackId(null);
-            }}
-          />
-        )}
+      {/* Datacenter Select - Desativado se location não selecionado */}
+      <DatacenterSelect
+        datacenters={datacenters}
+        onSelect={(id) => {
+          setDatacenterId(id || null);
+          setRackId(null);
+        }}
+        disabled={!locationId}
+      />
 
-        {datacenterId !== null && racks.length > 0 && (
-          <RackSelect racks={racks} onSelect={setRackId} />
-        )}
+      {/* Rack Select - Desativado se datacenter não selecionado */}
+      <RackSelect
+        racks={racks}
+        onSelect={setRackId}
+        disabled={!datacenterId}
+      />
 
-        {rackId !== null && racks.length > 0 && (
-          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
-            <button
-              name="showDatacenter"
-              type="submit"
-              className="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!!activeButton}
-            >
-              {activeButton === "showDatacenter" ? "Carregando..." : "Ver Datacenter"}
-            </button>
-            <button
-              name="searchEquipment"
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!!activeButton}
-            >
-              {activeButton === "searchEquipment" ? "Carregando..." : "Pesquisar Equipamento"}
-            </button>
-          </div>
-        )}
-      </form>
-    </div>
+      {/* Botões aparecem se rack selecionado */}
+      {rackId !== null && racks.length > 0 && (
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+          <button
+            name="showDatacenter"
+            type="submit"
+            className="w-full bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!!activeButton}
+          >
+            {activeButton === "showDatacenter" ? "Carregando..." : "Ver Datacenter"}
+          </button>
+          <button
+            name="searchEquipment"
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!!activeButton}
+          >
+            {activeButton === "searchEquipment" ? "Carregando..." : "Pesquisar Equipamento"}
+          </button>
+        </div>
+      )}
+    </form>
   );
+
 }
 
 export default FormSearchLocation;

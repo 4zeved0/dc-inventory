@@ -17,7 +17,7 @@ export default function SignIn() {
   }
   return (
     <div>
-      <div className="w-screen h-screen flex justify-center items-center sm:p-0 px-5">
+      <div className="w-screen bg-gray-100 h-screen flex justify-center items-center sm:p-0 px-5">
         {status === 'authenticated' ? <LoginRedirect /> : <LoginForm />}
       </div>
     </div>

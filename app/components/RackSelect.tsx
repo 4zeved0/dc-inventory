@@ -5,10 +5,11 @@ type Rack = {
 
 interface Props {
   racks: Rack[];
-  onSelect: (rackId: number | null) => void
+  onSelect: (rackId: number | null) => void;
+  disabled?: boolean;
 }
 
-export default function RackSelect({ racks, onSelect }: Props) {
+export default function RackSelect({ racks, onSelect, disabled = false }: Props) {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedId = event.target.value ? parseInt(event.target.value, 10) : null;
     onSelect(selectedId);
@@ -17,9 +18,12 @@ export default function RackSelect({ racks, onSelect }: Props) {
   return (
     <div className="relative flex flex-col">
       <select
-        className="noarrow rounded-md p-3 border-2 active:outline-none focus:outline-none bg-[#D9D9D9] pr-10"
         id="racksSelect"
+        disabled={disabled}
         onChange={handleChange}
+        className={`noarrow rounded-md p-3 border-2 pr-10 bg-[#D9D9D9] focus:ring-2 focus:ring-blue-500
+          active:outline-none focus:outline-none
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <option value="">Selecione um rack</option>
         {racks.map((rack) => (

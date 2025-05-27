@@ -1,5 +1,3 @@
-'use server'
-
 import { prisma } from "./prisma/prisma";
 
 export default async function createUser(email: string, name: string, surname: string) {

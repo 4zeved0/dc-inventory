@@ -6,14 +6,18 @@ type Datacenter = {
 interface Props {
   datacenters: Datacenter[];
   onSelect: (id: number | null) => void;
+  disabled?: boolean;
 }
 
-export default function DatacenterSelect({ datacenters, onSelect }: Props) {
+export default function DatacenterSelect({ datacenters, onSelect, disabled = false }: Props) {
   return (
     <div className="relative flex flex-col">
       <select
-        className="noarrow rounded-md p-3 border-2 active:outline-none focus:outline-none bg-[#D9D9D9] pr-10 focus:ring-2 focus:ring-blue-500"
         id="datacenterSelect"
+        disabled={disabled}
+        className={`noarrow rounded-md p-3 border-2 pr-10 bg-[#D9D9D9] focus:ring-2 focus:ring-blue-500
+          active:outline-none focus:outline-none
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         onChange={(e) => onSelect(e.target.value ? Number(e.target.value) : null)}
       >
         <option value="">Selecione um datacenter</option>
@@ -23,6 +27,7 @@ export default function DatacenterSelect({ datacenters, onSelect }: Props) {
           </option>
         ))}
       </select>
+
       <svg
         className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-90 pointer-events-none"
         width="24"
